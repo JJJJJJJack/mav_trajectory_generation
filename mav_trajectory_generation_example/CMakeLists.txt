@@ -20,6 +20,11 @@ cs_add_executable(trajectory_generation_6dof_example
         src/example_planner_6dof_node.cc
 )
 
+cs_add_executable(trajectory_generation_waypoints
+        src/waypoints_planner.cc
+        src/waypoints_planner_node.cc
+)
+
 ##########
 # EXPORT #
 ##########

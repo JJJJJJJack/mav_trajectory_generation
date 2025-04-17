@@ -3,6 +3,23 @@ This repository contains tools for polynomial trajectory generation and optimiza
 These techniques are especially suitable for rotary-wing micro aerial vehicles (MAVs).
 This README provides a brief overview of our trajectory generation utilities with some examples.
 
+## Installation info for catkin_make
+
+```
+cd ~/catkin_ws/src
+git clone https://github.com/JJJJJJJack/mav_trajectory_generation.git
+wstool merge mav_trajectory_generation/install/mav_trajectory_generation_https.rosinstall
+wstool update -j8
+touch eigen_checks/CATKIN_IGNORE
+touch mav_trajectory_generation/CATKIN_IGNORE
+catkin_make --pkg glog_catkin
+rm eigen_checks/CATKIN_IGNORE
+catkin_make --pkg eigen_checks
+catkin_make --pkg nlopt
+rm mav_trajectory_generation/CATKIN_IGNORE
+catkin_make --pkg mav_trajectory_generation
+```
+
 **Authors**: Markus Achtelik, Michael Burri, Helen Oleynikova, Rik Bähnemann, Marija Popović  
 **Maintainer**: Rik Bähnemann, brik@ethz.ch  
 **Affiliation**: Autonomous Systems Lab, ETH Zurich  
