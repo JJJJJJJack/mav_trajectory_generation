@@ -2,8 +2,8 @@
 
 ExamplePlanner::ExamplePlanner(ros::NodeHandle& nh) :
     nh_(nh),
-    max_v_(2.0),
-    max_a_(2.0),
+    max_v_(5.0),
+    max_a_(15.0),
     current_velocity_(Eigen::Vector3d::Zero()),
     current_pose_(Eigen::Affine3d::Identity()) {
       
@@ -63,7 +63,7 @@ bool ExamplePlanner::planTrajectory(const Eigen::VectorXd& goal_pos,
   // we have 2 vertices:
   // Start = current position
   // end = desired position and velocity
-  mav_trajectory_generation::Vertex start(dimension), end(dimension);
+  mav_trajectory_generation::Vertex start(dimension), middle(dimension), end(dimension);
 
 
   /******* Configure start point *******/
@@ -78,6 +78,14 @@ bool ExamplePlanner::planTrajectory(const Eigen::VectorXd& goal_pos,
   // add waypoint to list
   vertices.push_back(start);
 
+
+  middle.addConstraint(mav_trajectory_generation::derivative_order::POSITION,
+                      Eigen::Vector3d(1.5f, 1.0f, 0.8f));
+
+  //middle.addConstraint(mav_trajectory_generation::derivative_order::ACCELERATION,
+  //                    Eigen::Vector3d(0.0f, -8.0f, -9.8f));
+
+  vertices.push_back(middle);
 
   /******* Configure end point *******/
   // set end point constraints to desired position and set all derivatives to zero

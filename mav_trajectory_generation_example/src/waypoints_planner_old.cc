@@ -60,10 +60,11 @@ bool WaypointsPlanner::planTrajectory(const Eigen::VectorXd& goal_pos,
   // Optimze up to 4th order derivative (SNAP)
   const int derivative_to_optimize =
       mav_trajectory_generation::derivative_order::SNAP;
+
   // we have 3 vertices:
   // Start = current position
   // end = desired position and velocity
-  mav_trajectory_generation::Vertex start(dimension), middle(dimension),middle1(dimension),middle2(dimension),middle3(dimension),middle4(dimension),end(dimension);
+  mav_trajectory_generation::Vertex start(dimension), middle(dimension), end(dimension);
 
 
   /******* Configure start point *******/
@@ -82,107 +83,23 @@ bool WaypointsPlanner::planTrajectory(const Eigen::VectorXd& goal_pos,
 
 
   /******* Configure middle point *******/
-
-  // Powerloop
-  // Eigen::Vector3d middle_position(1,0,-2.0);//2.0 to 1.87
-  // Eigen::Vector3d middle_velocity(-2,0,0);
-  // Eigen::Vector3d middle_acceleration(0,0,12);
-  // middle.addConstraint(mav_trajectory_generation::derivative_order::POSITION,
-  //                     middle_position);
-  // middle.addConstraint(mav_trajectory_generation::derivative_order::VELOCITY,
-  //                       middle_velocity);
-  // middle.addConstraint(mav_trajectory_generation::derivative_order::ACCELERATION,
-  //                     middle_acceleration);
-  // vertices.push_back(middle);
-
-  // Multiloop
-  // Eigen::Vector3d middle_position(1,0,-2.0);//2.0 to 1.87
-  // Eigen::Vector3d middle_velocity(-2,0,0);
-  // Eigen::Vector3d middle_acceleration(0,0,12);
-  // middle.addConstraint(mav_trajectory_generation::derivative_order::POSITION,
-  //                     middle_position);
-  // middle.addConstraint(mav_trajectory_generation::derivative_order::VELOCITY,
-  //                       middle_velocity);
-  // middle.addConstraint(mav_trajectory_generation::derivative_order::ACCELERATION,
-  //                     middle_acceleration);
-  // vertices.push_back(middle);
-  // Eigen::Vector3d middle1_position(1,0,-1.15); // bottom
-  // Eigen::Vector3d middle1_velocity(2,0,0);
-  // Eigen::Vector3d middle1_acceleration(0,0,-3);
-  // middle1.addConstraint(mav_trajectory_generation::derivative_order::POSITION,
-  //                     middle1_position);
-  // // middle1.addConstraint(mav_trajectory_generation::derivative_order::VELOCITY,
-  // //                       middle1_velocity);
-  // middle1.addConstraint(mav_trajectory_generation::derivative_order::ACCELERATION,
-  //                     middle1_acceleration);
-  // // loop 2
-  // vertices.push_back(middle1); // bottom
-  // vertices.push_back(middle); // top
-  // // loop 3
-  // vertices.push_back(middle1); // bottom
-  // vertices.push_back(middle); // top
-  // // loop 4
-  // vertices.push_back(middle1); // bottom
-  // vertices.push_back(middle); // top
-
-  // OneGate
-  // Eigen::Vector3d middle_position(1,1,-2.0);
-  // Eigen::Vector3d middle_acceleration(0,-6,9.8);
-  // middle.addConstraint(mav_trajectory_generation::derivative_order::POSITION,
-  //                     middle_position);
-  // middle.addConstraint(mav_trajectory_generation::derivative_order::ACCELERATION,
-  //                     middle_acceleration);
-  // vertices.push_back(middle);
-
-  // TestHeightPerformance
-  Eigen::Vector3d middle_position(0,0,-2.0);
-  Eigen::Vector3d middle_velocity(0,0,0);
-  Eigen::Vector3d middle_acceleration(0,0,0);
+  Eigen::Vector3d middle_position(1,1,-1.5);
+  Eigen::Vector3d middle_velocity(2,0,0);
+  Eigen::Vector3d middle_acceleration(0,-5,9.8);
+  // set middle point constraints to current position and set all derivatives to zero
   middle.addConstraint(mav_trajectory_generation::derivative_order::POSITION,
                       middle_position);
-  middle.addConstraint(mav_trajectory_generation::derivative_order::VELOCITY,
-                        middle_velocity);
+
+  // set middle point's velocity to be constrained t
+  // middle.addConstraint(mav_trajectory_generation::derivative_order::VELOCITY,
+  //                     middle_velocity);
+
+  // set middle point's acceleration to be constrained
   middle.addConstraint(mav_trajectory_generation::derivative_order::ACCELERATION,
                       middle_acceleration);
-  vertices.push_back(middle);
-  Eigen::Vector3d middle1_position(0,0,-1.0);
-  Eigen::Vector3d middle1_velocity(0,0,0);
-  Eigen::Vector3d middle1_acceleration(0,0,0);
-  middle1.addConstraint(mav_trajectory_generation::derivative_order::POSITION,
-                      middle1_position);
-  middle1.addConstraint(mav_trajectory_generation::derivative_order::VELOCITY,
-                        middle1_velocity);
-  middle.addConstraint(mav_trajectory_generation::derivative_order::ACCELERATION,
-                      middle1_acceleration);
-  vertices.push_back(middle1);
-  vertices.push_back(middle);
-  vertices.push_back(middle1);
-  vertices.push_back(middle);
-  vertices.push_back(middle1);
 
-
-  // TestHorizontalPerformance
-  // Eigen::Vector3d middle_position(2,0,-1);
-  // Eigen::Vector3d middle_velocity(0,-2,0);
-  // middle.addConstraint(mav_trajectory_generation::derivative_order::POSITION,
-  //                     middle_position);
-  // middle.addConstraint(mav_trajectory_generation::derivative_order::VELOCITY,
-  //                       middle_velocity);
-  // vertices.push_back(middle);
-  // Eigen::Vector3d middle1_position(0,0,-1.0);
-  // Eigen::Vector3d middle1_velocity(0,2,0);
-  // middle1.addConstraint(mav_trajectory_generation::derivative_order::POSITION,
-  //                     middle1_position);
-  // middle1.addConstraint(mav_trajectory_generation::derivative_order::VELOCITY,
-  //                       middle1_velocity);
-  // vertices.push_back(middle1);
-  // vertices.push_back(middle);
-  // vertices.push_back(middle1);
-  // vertices.push_back(middle);
-  // vertices.push_back(middle1);
-  // vertices.push_back(middle);
-  // vertices.push_back(middle1);
-
+  // add waypoint to list
+  vertices.push_back(middle);
 
   /******* Configure end point *******/
   // set end point constraints to desired position and set all derivatives to zero
@@ -192,6 +109,7 @@ bool WaypointsPlanner::planTrajectory(const Eigen::VectorXd& goal_pos,
   // set start point's velocity to be constrained to current velocity
   end.addConstraint(mav_trajectory_generation::derivative_order::VELOCITY,
                     goal_vel);
+
   // add waypoint to list
   vertices.push_back(end);
 
@@ -216,7 +134,7 @@ bool WaypointsPlanner::planTrajectory(const Eigen::VectorXd& goal_pos,
 
   // get trajectory as polynomial parameters
   opt.getTrajectory(&(*trajectory));
-  
+
   return true;
 }
 
@@ -241,7 +159,6 @@ bool WaypointsPlanner::publishTrajectory(const mav_trajectory_generation::Trajec
   ROS_INFO_STREAM(msg);
   pub_trajectory_.publish(msg);
 
-
   return true;
-}  
+}
 

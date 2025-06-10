@@ -29,7 +29,7 @@ int main(int argc, char** argv) {
 
   // define set point
   Eigen::Vector3d position, velocity;
-  position << 2.0, 0.0, 0.0;
+  position << 2.0, 0.0, -1.0;
   velocity << 0.0, 0.0, 0.0;
 
   // THIS SHOULD NORMALLY RUN INSIDE ROS::SPIN!!! JUST FOR DEMO PURPOSES LIKE THIS.
@@ -41,9 +41,8 @@ int main(int argc, char** argv) {
   ROS_WARN_STREAM("Planning start");
   mav_trajectory_generation::Trajectory trajectory;
   planner.planTrajectory(position, velocity, &trajectory);
-  bool planning_result = planner.publishTrajectory(trajectory);
-  std::cerr<<std::endl<<"Planning result"<<planning_result<<std::endl<<std::endl;
+bool planning_result = planner.publishTrajectory(trajectory);
   ROS_WARN_STREAM("DONE. GOODBYE.");
-
-  return 0;
+ std::cerr<<std::endl<<"Planning result"<<planning_result<<std::endl<<std::endl;
+ return true;
 }
